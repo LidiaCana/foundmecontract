@@ -4,7 +4,9 @@
   "description": "smart contract for found me",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "node ethereum/compile.js",
+    "deploy": "node ethereum/deploy.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,8 @@
   },
   "homepage": "https://github.com/LidiaCana/foundmecontract#readme",
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "ganache": "^7.9.2",
     "mocha": "^10.2.0",
