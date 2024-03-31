@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "dev": "node server.js",
     "build": "node ethereum/compile.js",
     "deploy": "node ethereum/deploy.js"
   },
@@ -24,7 +25,18 @@
     "fs-extra": "^11.2.0",
     "ganache": "^7.9.2",
     "mocha": "^10.2.0",
+    "next": "^14.1.4",
+    "next-routes": "^1.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.2",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.5",
     "solc": "^0.8.24",
     "web3": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.69",
+    "typescript": "5.4.3"
   }
 }
