@@ -2,19 +2,23 @@ import React from "react";
 import factory from "../ethereum/factory";
 import { Button, CardGroup } from "semantic-ui-react";
 import Layout from "../components/Layout";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { Routes } from "../routes";
 
 // Get the data returned from getServerSideProps as props
 const renderCard = (campaigns) => {
   const items = campaigns.map((address) => {
     return {
       header: address,
-      description: <a>View Campaign</a>,
+      description: <Link href={`/campaign/${address}`}>View Campaign</Link>,
       fluid: true,
     };
   });
   return <CardGroup items={items} />;
 };
 function Page({ campaigns }) {
+  const router = useRouter();
   return (
     <Layout>
       <h1>Fund Me</h1>
@@ -23,6 +27,9 @@ function Page({ campaigns }) {
         content="Create Campaign"
         icon="add circle"
         primary
+        onClick={() => {
+          router.push(Routes.NewCampaign);
+        }}
       />
       {renderCard(campaigns)}
     </Layout>
