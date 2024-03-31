@@ -1,9 +1,12 @@
 import Link from "next/link";
-import React, { useState } from "react";
-import { MenuMenu, MenuItem, Menu } from "semantic-ui-react";
+import React from "react";
+import { MenuMenu, Menu } from "semantic-ui-react";
+import { Routes } from "../routes";
+import factory from "../ethereum/factory";
+
 const Header = () => {
-  const [activeItem, setActiveItem] = useState("browse");
-  const handleItemClick = (e, { name }) => setActiveItem(name);
+
+
   return (
     <div>
       <Menu style={{ marginTop: "10px" }}>
@@ -12,11 +15,11 @@ const Header = () => {
         </Link>
 
         <MenuMenu position="right">
-          <Link href="/" passHref className="item">
+          <Link href={Routes.Home} passHref className="item">
             Campaigns
           </Link>
 
-          <Link href="/campaign/new" passHref className="item">
+          <Link href={Routes.NewCampaign} passHref className="item">
             +
           </Link>
         </MenuMenu>
@@ -24,4 +27,11 @@ const Header = () => {
     </div>
   );
 };
+export async function getServerSideProps() {
+  return {
+    props: {
+      campaigns: await factory.methods.().call(),
+    },
+  };
+}
 export default Header;
