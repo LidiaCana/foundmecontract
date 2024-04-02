@@ -5,8 +5,6 @@ import { Routes } from "../routes";
 import factory from "../ethereum/factory";
 
 const Header = () => {
-
-
   return (
     <div>
       <Menu style={{ marginTop: "10px" }}>
@@ -27,11 +25,4 @@ const Header = () => {
     </div>
   );
 };
-export async function getServerSideProps() {
-  return {
-    props: {
-      campaigns: await factory.methods.().call(),
-    },
-  };
-}
 export default Header;
