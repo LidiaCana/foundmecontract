@@ -13,11 +13,10 @@ import web3 from "../../ethereum/web3";
 import ContributeForm from "../../components/ContributeForm";
 import RequestForm from "../../components/RequestForm";
 import TableRequest from "../../components/tableRequest/Table";
-const Show = ({ details }) => {
+const Show = ({ details, requests }) => {
   const router = useRouter();
-  // const accounts = await web3.eth.getAccounts();
   const [address, setAddress] = useState("");
-  const items = [
+  const cardsSummary = [
     {
       meta: "Manager",
       description:
@@ -54,7 +53,6 @@ const Show = ({ details }) => {
     const accounts = await web3.eth.getAccounts();
     setAddress(accounts[0]);
   };
-
   useEffect(() => {
     fetchAddress();
   }, []);
@@ -66,7 +64,7 @@ const Show = ({ details }) => {
       </Header>
       <Grid>
         <GridColumn width={10}>
-          <CardGroup items={items} />
+          <CardGroup items={cardsSummary} />
         </GridColumn>
         <GridColumn width={6}>
           <Divider horizontal>New Contribution</Divider>
@@ -82,26 +80,35 @@ const Show = ({ details }) => {
       </Grid>
 
       <Grid>
-        <TableRequest />
+        <TableRequest requests={requests} />
       </Grid>
     </Layout>
   );
 };
 export async function getServerSideProps(context) {
-  const id = context.params.id;
-  const details = await campaign(id).methods.getSummary().call();
-  const requestCount = await campaign(id).methods.getRequestsCount().call();
+  const campaignAddress = context.params.id;
+  const campaignInstance = campaign(campaignAddress);
+  const details = await campaignInstance.methods.getSummary().call();
+  const requestCount = details[2];
   // const approversCount = await campaign(id).methods.approversCount().call();
 
-  // const requests = await Promise.all(
-  //   Array(parseInt(requestCount))
-  //     .fill()
-  //     .map((element, index) => {
-  //       return campaign(id).methods.requests(index).call();
-  //     })
-  // );
-  const patito = Array(parseInt(requestCount));
-  console.log({ patito });
+  const requests = await Promise.all(
+    Array(parseInt(requestCount))
+      .fill(null)
+      .map(async (element, index) => {
+        const response = await campaignInstance.methods.requests(index).call();
+        return {
+          id: index,
+          description: response[0],
+          value: web3.utils.fromWei(response[1], "ether"),
+          isCompleted: response[2],
+          recipient: response[3],
+          approvalCount: response[4].toString(),
+          manager: details[4],
+          campaignAddress: campaignAddress,
+        };
+      })
+  );
   return {
     props: {
       details: {
@@ -111,7 +118,7 @@ export async function getServerSideProps(context) {
         approversCount: details[3].toString(),
         manager: details[4],
       },
-      requests: "requests",
+      requests,
     },
   };
 }
