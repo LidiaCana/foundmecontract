@@ -20,7 +20,7 @@ contract Campaign {
         uint value;
         bool completed;
         address payable recipiet;
-        uint aprobalCount;
+        uint approvalCount;
         mapping(address => bool) approvers;
     }
     address public manager;
@@ -55,7 +55,7 @@ contract Campaign {
         newRequest.value = _value;
         newRequest.recipiet = _recipiet;
         newRequest.completed = false;
-        newRequest.aprobalCount = 0;
+        newRequest.approvalCount = 0;
     }
     function approveRequest(uint requestIndex) public {
         Request storage request = requests[requestIndex];
@@ -64,13 +64,30 @@ contract Campaign {
         require(!request.approvers[msg.sender]);
 
         request.approvers[msg.sender] = true;
-        request.aprobalCount++;
+        request.approvalCount++;
     }
     function finalizeRequest(uint requestIndex) public restrict {
         Request storage requestSelected = requests[requestIndex];
         require(!requestSelected.completed);
-        require(requestSelected.aprobalCount > (approversCount / 2));
+        require(requestSelected.approvalCount > (approversCount / 2));
         requestSelected.recipiet.transfer(requestSelected.value);
         requestSelected.completed = true;
+    }
+
+    function getSummary()
+        public
+        view
+        returns (uint, uint, uint, uint, address)
+    {
+        return (
+            minimunContribution,
+            address(this).balance,
+            requests.length,
+            approversCount,
+            manager
+        );
+    }
+    function getRequestsCount() public view returns (uint) {
+        return requests.length;
     }
 }
